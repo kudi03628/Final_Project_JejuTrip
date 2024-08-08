@@ -446,3 +446,44 @@ from user_constraints
 where table_name = 'TBL_MEMBER';
 
 
+
+
+-- ============== ★ DB 로컬로 백업하기 ★ ============== --
+
+show user;
+-- USER이(가) "SYS"입니다.
+
+alter session set "_ORACLE_SCRIPT"=true;
+-- Session이(가) 변경되었습니다.
+
+create user final_orauser2 identified by gclass default tablespace users;
+-- User FINAL_ORAUSER1이(가) 생성되었습니다.
+
+grant connect, resource, unlimited tablespace, create view to final_orauser2;
+-- Grant을(를) 성공했습니다.
+
+-- 새 접속 -> local_final_orauser2 만들기 (사용자 이름 : final_orauser2, 비밀번호 : gclass, 호스트 이름 : localhost, 포트 : 1521로 연결)
+
+-- local_final_orauser2 에 접속
+
+show user;
+-- USER이(가) "FINAL_ORAUSER2"입니다.
+
+select * from tab;
+
+
+-- ============== ★ AWS에 올리기 ★ ============== --
+
+-- ec2_ubuntu_24.04_system에 접속
+
+show user;
+-- USER이(가) "SYSTEM"입니다.
+
+create user final_orauser2 identified by gclass default tablespace users;
+-- User FINAL_ORAUSER1이(가) 생성되었습니다.
+
+grant connect, resource, unlimited tablespace, create view to final_orauser2;
+-- Grant을(를) 성공했습니다.
+
+
+
