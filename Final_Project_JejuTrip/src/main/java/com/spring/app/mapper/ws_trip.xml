@@ -220,26 +220,37 @@
 	</resultMap>
 	
 	<select id="user_age_group_chart" resultMap="PERCNTAGE_AGE_GROUP">
-		
-		WITH A
-		AS (
-		SELECT ageGroup, count(*) as ageGroup_CNT
-		FROM
-		(
-		select trunc(case 
-		       when to_date(extract(year from sysdate)||substr(birthday,6,2)||substr(birthday,9,2),'yyyymmdd') &lt;= to_date(to_char(sysdate,'yyyymmdd')) 
-		       then extract(year from sysdate) - substr(birthday,0,4)
-		       else extract(year from sysdate) - substr(birthday,0,4) - 1
-		       end,-1) as ageGroup
-		from tbl_member
-		where userid != 'admin'
+		WITH A AS (
+		    SELECT trunc(
+		               CASE 
+		                   WHEN TO_DATE(EXTRACT(YEAR FROM SYSDATE) || 
+		                                SUBSTR(birthday, 6, 2) || 
+		                                SUBSTR(birthday, 9, 2), 'yyyy-mm-dd') 
+		                        &lt;= TO_DATE(TO_CHAR(SYSDATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') 
+		                   THEN EXTRACT(YEAR FROM SYSDATE) - TO_NUMBER(SUBSTR(birthday, 1, 4))
+		                   ELSE EXTRACT(YEAR FROM SYSDATE) - TO_NUMBER(SUBSTR(birthday, 1, 4)) - 1
+		               END, -1) AS ageGroup,
+		           COUNT(*) AS ageGroup_CNT
+		    FROM tbl_member
+		    WHERE userid != 'admin'
+		    GROUP BY trunc(
+		               CASE 
+		                   WHEN TO_DATE(EXTRACT(YEAR FROM SYSDATE) || 
+		                                SUBSTR(birthday, 6, 2) || 
+		                                SUBSTR(birthday, 9, 2), 'yyyy-mm-dd') 
+		                        &lt;= TO_DATE(TO_CHAR(SYSDATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') 
+		                   THEN EXTRACT(YEAR FROM SYSDATE) - TO_NUMBER(SUBSTR(birthday, 1, 4))
+		                   ELSE EXTRACT(YEAR FROM SYSDATE) - TO_NUMBER(SUBSTR(birthday, 1, 4)) - 1
+		               END, -1)
+		),
+		B AS (
+		    SELECT SUM(ageGroup_CNT) AS TOTAL
+		    FROM A
 		)
-		group by ageGroup
-		)
-		SELECT A.ageGroup||'대' as ageGroup, TO_CHAR( ROUND((A.ageGroup_CNT / B.TOTAL) * 100, 1), '990.0') AS PERCNTAGE
-		FROM A CROSS JOIN (SELECT SUM(ageGroup_CNT) AS TOTAL FROM A) B
-		order by ageGroup asc
-		
+		SELECT A.ageGroup || '대' AS ageGroup, 
+		       TO_CHAR(ROUND((A.ageGroup_CNT / B.TOTAL) * 100, 1), '990.0') AS PERCENTAGE
+		FROM A, B
+		ORDER BY ageGroup ASC
 	</select>
 	
 	<resultMap type="HashMap" id="PERCNTAGE_GENDER">
@@ -300,7 +311,7 @@
 		SELECT to_char(R.check_in,'yyyy-mm') as reservation_month , count(*) as CNT 
 		FROM A JOIN tbl_reservation R
 		ON A.room_detail_code = R.fk_room_detail_code
-		WHERE R.reservation_date between #{choice_year}||'-01-01' and #{choice_year}||'-12-31'
+		WHERE R.reservation_date between to_date(#{choice_year}||'-01-01' , 'yyyy-mm-dd') and to_date(#{choice_year}||'-12-31' , 'yyyy-mm-dd')
 		GROUP BY to_char(R.check_in,'yyyy-mm')
 		ORDER BY 1
 	</select>
@@ -370,6 +381,17 @@
 		from tbl_play
 	</select>
 	
+	<select id="get_choice_month_last_day" parameterType="String" resultType="String">
+		SELECT TO_CHAR(
+           LAST_DAY(
+               TO_DATE(EXTRACT(YEAR FROM SYSDATE) || '-' || 
+                       LPAD(#{choice_month}, 2, '0') || '-01', 'yyyy-mm-dd')
+           ), 
+           'yyyy-mm-dd'
+       ) AS choice_month_last_day
+		FROM dual
+	</select>
+	
 	<resultMap type="HashMap" id="CNT_DAY_RESERVATION">
 		<result property="reservation_day" column="reservation_day" 	javaType="String" />
 		<result property="CNT" 				column="CNT" 					javaType="String" />
@@ -391,11 +413,6 @@
 		WHERE R.reservation_date between to_date(extract(year from sysdate)||'-'||#{choice_month}||'-01', 'yyyy-mm-dd') and to_date(#{choice_month_last_day} , 'yyyy-mm-dd')
 		GROUP BY to_char(R.check_in,'yyyy-mm-dd')
 		ORDER BY 1
-	</select>
-	
-	<select id="get_choice_month_last_day" parameterType="String" resultType="String">
-		select to_char(last_day(to_date(extract(year from sysdate)||'-'||#{choice_month}||'-01')),'yyyy-mm-dd') as choice_month_last_day
-		from dual
 	</select>
 	
 	<resultMap type="HashMap" id="profit_year_all">
