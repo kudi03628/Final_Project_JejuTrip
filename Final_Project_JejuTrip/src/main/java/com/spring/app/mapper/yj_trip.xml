@@ -161,7 +161,7 @@
 	<!-- 맛집 랜덤 추천 -->
 	
 	<select id="randomRecommend" parameterType="HashMap" resultType="FoodstoreVO">
-		<![CDATA[
+		
 			select food_store_code, local_status, food_name
 				 , food_content, food_businesshours, food_mobile
 				 , food_address, food_main_img, review_division, food_category
@@ -172,14 +172,14 @@
 			    from tbl_food_store
 			    order by DBMS_RANDOM.RANDOM
 			)
-			where rownum <= 3
-		]]> 
+			where rownum &lt;= 3
+		 
 	</select>
 	
 	
 	<!-- 근처 숙소 추천을 위해 숙소 상세정보 가져오기  -->
 	<select id="getLodgingList" parameterType="String" resultType="LodgingVO">
-		<![CDATA[
+		
 			select lodging_code, local_status, main_img, lodging_name
 			from (
 			    select lodging_code, local_status, main_img, lodging_name
@@ -187,8 +187,8 @@
 			    where local_status = #{local_status}
 			    order by DBMS_RANDOM.RANDOM
 			)
-			where rownum <= 2
-		]]> 
+			where rownum &lt;= 2
+		 
 	</select>
 	
 	

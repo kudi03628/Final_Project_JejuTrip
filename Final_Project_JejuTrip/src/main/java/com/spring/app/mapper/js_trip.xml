@@ -63,7 +63,7 @@
 				(
 				SELECT A.lodging_code, A.room_name, A.room_stock, max_person,
 				       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
-				       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+				       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) &gt;= 1 THEN '예약가능'
 				       ELSE '예약종료' END AS RESERVATION_STATE
 				 FROM 
 				 (
@@ -76,13 +76,13 @@
 				  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 				  FROM tbl_room_detail D JOIN tbl_reservation RSV
 				  ON D.room_detail_code = RSV.fk_room_detail_code
-				  WHERE (RSV.check_in <![CDATA[<]]> #{check_out} AND RSV.check_out <![CDATA[>]]> #{check_in})
+				  WHERE (RSV.check_in &lt; TO_DATE(#{check_out}, 'YYYY-MM-DD') AND RSV.check_out &gt; TO_DATE(#{check_in}, 'YYYY-MM-DD'))
 				  and RSV.status = 1
 				  GROUP BY D.fk_lodging_code, D.room_name
 				 ) B
 				 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
 				) C
-				WHERE C.RESERVATION_STATE = '예약가능' and max_person >= #{people}
+				WHERE C.RESERVATION_STATE = '예약가능' and max_person &gt;= #{people}
 	          )D
 	          on L.lodging_code = D.lodging_code
 	          where status = 1 
@@ -156,7 +156,7 @@
 			(
 			SELECT A.lodging_code, A.room_name, A.room_stock, max_person,
 			       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
-			       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+			       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) &gt;= 1 THEN '예약가능'
 			       ELSE '예약종료' END AS RESERVATION_STATE
 			 FROM 
 			 (
@@ -169,13 +169,13 @@
 			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 			  FROM tbl_room_detail D JOIN tbl_reservation RSV
 			  ON D.room_detail_code = RSV.fk_room_detail_code
-			  WHERE (RSV.check_in <![CDATA[<]]> #{check_out} AND RSV.check_out <![CDATA[>]]> #{check_in})
+			  WHERE (RSV.check_in &lt; TO_DATE(#{check_out}, 'YYYY-MM-DD') AND RSV.check_out &gt; TO_DATE(#{check_in}, 'YYYY-MM-DD'))
 			  and RSV.status = 1
 			  GROUP BY D.fk_lodging_code, D.room_name
 			 ) B
 			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
 			) C
-			WHERE C.RESERVATION_STATE = '예약가능' and max_person >= #{people}
+			WHERE C.RESERVATION_STATE = '예약가능' and max_person &gt;= #{people}
           )D
           on L.lodging_code = D.lodging_code
 	    where status = 1 
@@ -242,7 +242,7 @@
 		<result property="room_img" column="room_img" javaType="String" />
 	</resultMap>
 	<select id="getRoomDetail" resultMap="RoomDetail" parameterType="HashMap">
-	<![CDATA[
+	
 		SELECT A.lodging_code, A.room_detail_code, A.room_name, A.price,
                A.room_stock - NVL(B.RESERVATION_CNT, 0) AS remaining_qty,
                A.min_person, A.max_person, A.room_img ,check_intime , check_outtime
@@ -261,12 +261,12 @@
 			  ON D.room_detail_code = RSV.fk_room_detail_code
 			  WHERE RSV.status = 1 and 
 			  (
-		        (RSV.check_in < #{check_out} AND RSV.check_out > #{check_in}) 
+		        (RSV.check_in &lt; to_date(#{check_out}, 'yyyy-mm-dd') AND RSV.check_out &gt; to_date(#{check_in} , 'yyyy-mm-dd') ) 
 		      )
 			  GROUP BY D.fk_lodging_code, D.room_name
 			 ) B
 			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
-			 where max_person >= #{people}]]>
+			 where max_person &gt;= #{people}
 	</select>
 	<!--  (RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}) -->
 	
@@ -615,23 +615,23 @@
        <result property="link"            column="link"        javaType="String" />
    </resultMap>
 	<select id="getCurrentFestival" resultMap="getCurrentFestival_Map">
-		<![CDATA[select festival_no, title_name, img, startdate, enddate, local_status, link 
+		select festival_no, title_name, img, startdate, enddate, local_status, link 
 		   from 
 		   (
 		   select festival_no, title_name, img, to_char(startdate, 'yyyy-mm-dd') as startdate ,
 		   to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link 
 		   from tbl_festival
-		   where startdate <= sysdate and 
-		   		enddate >= sysdate
+		   where startdate &lt;= sysdate and 
+		   		enddate &gt;= sysdate
 		   order by DBMS_RANDOM.RANDOM		
 		   )
-		   where rownum <= 4]]>
+		   where rownum &lt;= 4
 	</select>
 	
 	
 	<!-- 커뮤니티 메인에서 게시글로 연결해주기 -->
 	<select id="getPopularBoard" resultType="BoardVO">
-		<![CDATA[select *
+		select *
 	    from
 	    (
 	    select * 
@@ -639,7 +639,7 @@
 	    
 	    order by readcount desc
 	    )
-	    where rownum <=7]]>
+	    where rownum &lt;=7
 	</select>
 	
 	<!-- where regdate between to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd') and  

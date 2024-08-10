@@ -13,7 +13,7 @@
    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
       <property name="driverClassName" value="net.sf.log4jdbc.DriverSpy" />
       <property name="url" value="jdbc:log4jdbc:oracle:thin:@//127.0.0.1:1521/xe" />
-      <property name="username" value="local_final_orauser2" />
+      <property name="username" value="final_orauser2" />
       <property name="password" value="gclass" />
       
       <property name="initialSize" value="20"/>   <!-- BasicDataSource 클래스 생성 후 최초로 getConnection() 메소드를 호출할 때 커넥션 풀에 채워 넣을 커넥션 개수(default=0). initialSize 값이 maxTotal 값보다 커버리면 논리적으로 오류가 있는 설정이다. -->   
@@ -29,7 +29,7 @@
    <!-- mapper 파일이란 sql 문을 가지고 있는 xml 파일을 말한다. -->
    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
       <property name="mapperLocations" value="classpath*:com/spring/app/mapper/*.xml" />
-    <property name="configLocation" value="classpath:com/spring/app/mybatisconfig/mybatis-config.xml" /> <!-- mybatis-config.xml에 대한 정보를 기술함 --> 
+	  <property name="configLocation" value="classpath:com/spring/app/mybatisconfig/mybatis-config.xml" /> <!-- mybatis-config.xml에 대한 정보를 기술함 --> 
   <!--  또는 ,  id와 ref의 상관관계에대해서 복습해라-->
          <!--  <property name="configLocation" value="classpath:mybatis/mybatis-config.xml" /> -->   <!-- mybatis-config.xml에 대한 정보를 기술함 --> 
       <property name="dataSource" ref="dataSource" />

@@ -213,64 +213,65 @@
     		async:false, 
     		dataType:"json",
     		success:function(json){
-    			
-    			let resultArr = [];
-				for(let i=0;i<json.length;i++){
-					let obj;
-					if(i==0){
-						obj = {
-							   name: json[i].ageGroup,
-							   y: Number(json[i].PERCNTAGE),
-							   sliced: true,
-							   selected: true
-							  };
-					}
-					else{
-						obj = {
-							   name: json[i].ageGroup,
-							   y: Number(json[i].PERCNTAGE)
-							  };
-					}
-					resultArr.push(obj);
-				}      
-   				
+    			 // console.log(json); 
+    			 let resultArr = [];
+    			 for (let i = 0; i < json.length; i++) {
+    				 
+    				 /*
+    				 console.log('PERCNTAGE:', json[i].PERCNTAGE);  // PERCNTAGE 값 확인
+   			         let percValue = parseFloat(json[i].PERCNTAGE);
+   			         if (isNaN(percValue)) {
+   			             console.error('Invalid PERCNTAGE value:', json[i].PERCNTAGE);
+   			         }
+    			     */   
+    			     let obj = {
+    			         name: json[i].ageGroup,
+    			         y: parseFloat(json[i].PERCNTAGE)  // parseFloat로 변환
+    			     };
+    			     if (i === 0) {
+    			         obj.sliced = true;
+    			         obj.selected = true;
+    			     }
+    			     resultArr.push(obj);
+    			 }
+    			 console.log('resultArr:', resultArr); 
 			     
 			     ////////////////////////////////////////////////////////////////////////////////////////
 			    
-			     Highcharts.chart('user_age_group_chart_div', {
-			            chart: {
-			                plotBackgroundColor: null,
-			                plotBorderWidth: null,
-			                plotShadow: false,
-			                type: 'pie'
-			            },
-			            title: {
-			                text: '사용자 연령대별 퍼센티지'
-			            },
-			            tooltip: {
-			                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-			            },
-			            accessibility: {
-			                point: {
-			                    valueSuffix: '%'
-			                }
-			            },
-			            plotOptions: {
-			                pie: {
-			                    allowPointSelect: true,
-			                    cursor: 'pointer',
-			                    dataLabels: {
-			                        enabled: true,
-			                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-			                    }
-			                }
-			            },
-			            series: [{
-			                name: '연령대',
-			                colorByPoint: true,
-			                data: resultArr
-			            }]
-			        });
+    			 Highcharts.chart('user_age_group_chart_div', {
+    				    chart: {
+    				        plotBackgroundColor: null,
+    				        plotBorderWidth: null,
+    				        plotShadow: false,
+    				        type: 'pie'
+    				    },
+    				    title: {
+    				        text: '사용자 연령대별 퍼센티지'
+    				    },
+    				    tooltip: {
+    				        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    				    },
+    				    accessibility: {
+    				        point: {
+    				            valueSuffix: '%'
+    				        }
+    				    },
+    				    plotOptions: {
+    				        pie: {
+    				            allowPointSelect: true,
+    				            cursor: 'pointer',
+    				            dataLabels: {
+    				                enabled: true,
+    				                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+    				            }
+    				        }
+    				    },
+    				    series: [{
+    				        name: '연령대',
+    				        colorByPoint: true,
+    				        data: resultArr
+    				    }]
+    				});
 				     
     			
     		},

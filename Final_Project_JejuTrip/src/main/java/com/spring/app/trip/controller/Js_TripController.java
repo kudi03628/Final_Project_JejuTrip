@@ -47,6 +47,16 @@ public class Js_TripController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private FileManager fileManager;
 	
+	
+	@GetMapping("/")
+	public ModelAndView home(ModelAndView mav) {
+		// 기본 /JejuDream/ 만 쳐도 index에 가게끔 해주기
+		
+		mav.setViewName("redirect:/index.trip");
+		
+		return mav;
+	}
+	
 	// 숙소리스트 페이지로 보내주기
 	@GetMapping("/lodgingList.trip")
     public ModelAndView lodgingList(ModelAndView mav, HttpServletRequest request) {

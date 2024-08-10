@@ -6,7 +6,7 @@
     //    /JejuDream
 %>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=16695e6ff612a1dbaa353fda89e2424d&libraries=services"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bb0e962cf3a8f2e4e82d4838e211745c&libraries=services"></script>
 
 <style type="text/css">
 

@@ -1097,8 +1097,20 @@ public class Ws_TripController {
 		JSONArray jsonArr = new JSONArray();
 		for(Map<String,String> map : mapList) {
 			JSONObject jsonObj = new JSONObject();
+			
+			// 결과 확인
+			String ageGroup = map.get("ageGroup"); // "30대"와 같은 값
+			String percentage = map.get("PERCENTAGE"); // "50.0"과 같은 값
+
+			// 필요한 경우 문자열에서 숫자형으로 변환
+			double percentageValue = Double.parseDouble(percentage);
+
+			// 디버깅을 위해 출력
+			// System.out.println("Age Group: " + ageGroup);
+			// System.out.println("Percentage: " + percentageValue);
+			
 			jsonObj.put("ageGroup", map.get("ageGroup"));
-			jsonObj.put("PERCNTAGE", map.get("PERCNTAGE"));
+			jsonObj.put("PERCNTAGE", percentageValue);
 			jsonArr.put(jsonObj);
 		}
 		

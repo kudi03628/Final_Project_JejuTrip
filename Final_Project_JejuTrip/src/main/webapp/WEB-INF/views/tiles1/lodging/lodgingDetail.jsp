@@ -6,7 +6,7 @@
     String ctxPath = request.getContextPath();
     //    /JejuDream
 %>
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f42c6cbd2d2060c5c719ee80540fbfbc&libraries=services"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bb0e962cf3a8f2e4e82d4838e211745c&libraries=services"></script>
 
 
 <script type="text/javascript">
